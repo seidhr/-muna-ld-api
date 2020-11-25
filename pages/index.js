@@ -6,12 +6,12 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Marcus LD API - demo</title>
+        <title>Muna LD API - demo</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Marcus LD API - demo</h1>
+        <h1 className={styles.title}>Muna LD API - demo</h1>
 
         <p className={styles.description}>
           Sanity to JSON-LD PoC!
