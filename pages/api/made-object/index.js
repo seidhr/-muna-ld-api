@@ -34,10 +34,10 @@ export default function handler(req, res) {
   clean = removeKey(clean, "_rev");
   clean = filterObject(clean, "_type", "reference");
 
-  const jsonld = {
+  const json = {
     ...context,
     "@graph": [...clean],
   };
 
-  res.status(200).json(jsonld);
+  res.status(200).json(json);
 }
