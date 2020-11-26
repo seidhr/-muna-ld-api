@@ -23,6 +23,14 @@ export default function Home() {
           <Link href="/api/made-object/ubm-bf-diby-000358">
             <a>api/made-object/ubm-bf-diby-000358</a>
           </Link>
+          <br />
+        </p>
+        <p className={styles.description}>
+          Sanity JSON to RDF.
+          <br />
+          <Link href="/api/made-object/rdf">
+            <a>api/made-object/rdf</a>
+          </Link>
         </p>
 
         <p className={styles.description}>
