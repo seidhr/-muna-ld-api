@@ -4,16 +4,18 @@ import blocksToHtml from "@sanity/block-content-to-html";
 import { filterObject, removeKey } from "../../../lib";
 import { context } from "../../../lib/context";
 
-export default function handler(req, res) {
-  let clean = madeObjects.map((o) =>
+function toJSONids(arr) {
+  return arr.map((o) =>
     rename(o, function (key) {
-      if (key === "_id" || key === "_ref" || key === "_key") return "@id";
+      if (key === "_id" || key === "_ref" || key === "_key") return "id";
       return key;
     })
   );
+}
 
+export default function handler(req, res) {
   const h = blocksToHtml.h;
-
+  
   const serializers = {
     types: {
       code: (props) =>
@@ -24,19 +26,33 @@ export default function handler(req, res) {
         ),
     },
   };
-
   // ONLY for testing! All PortableText must be converted to html
-  clean[0].referredToBy[0].body = blocksToHtml({
-    blocks: clean[0].referredToBy[0].body,
-    serializers: serializers,
-  });
-
-  clean = removeKey(clean, "_rev");
-  clean = filterObject(clean, "_type", "reference");
+  const pt2html = madeObjects.map((o) => 
+    ({
+      ...o,
+      referredToBy: o.referredToBy.map(b => ({
+        ...b,
+        body: blocksToHtml({
+          blocks: b.body,
+          serializers: serializers,
+        }) 
+      }))
+    }))
+  const fixIDs = toJSONids(pt2html)
+  const removedRev = fixIDs.map(o => {return removeKey(o, "_rev")});
+  const removeUnderscore = removedRev.map((o) =>
+    rename(o, function (key) {
+      if (key.startsWith('_')) {
+        return key.substring(1)
+      };
+      return key;
+    })
+  )
+  const result = filterObject(removeUnderscore, "type", "reference");
 
   const json = {
     ...context,
-    "@graph": [...clean],
+    "@graph": [...result],
   };
 
   res.status(200).json(json);
