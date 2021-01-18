@@ -9,7 +9,8 @@ import client from "../../../lib/sanity";
 const postQuery = `
   *[_type == "madeObject" && _id == $id] {
     ...,
-    //hasCurrentOwner[]->{...}
+    //hasCurrentOwner[]->{...},
+    //hasType[]->{...}
   }`
 
 export default async function idHandler(req, res) {
