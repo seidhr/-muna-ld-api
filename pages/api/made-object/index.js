@@ -1,21 +1,19 @@
-import { madeObjects } from "../../../data";
 import rename from "deep-rename-keys";
 import blocksToHtml from "@sanity/block-content-to-html";
-import { filterObject, removeKey } from "../../../lib";
+import { filterObject, removeKey, toJSONids } from "../../../lib";
 import { context } from "../../../lib/context";
+import client from "../../../lib/sanity";
 
-function toJSONids(arr) {
-  return arr.map((o) =>
-    rename(o, function (key) {
-      if (key === "_id" || key === "_ref" || key === "_key") return "id";
-      return key;
-    })
-  );
-}
+const postQuery = `
+  *[_type == "madeObject"][0...10] {
+    ...,
+  }`
 
-export default function handler(req, res) {
+export default async function handler(req, res) {
+  const response = await client.fetch(postQuery);
+  const data = await response;
+
   const h = blocksToHtml.h;
-  
   const serializers = {
     types: {
       code: (props) =>
@@ -26,11 +24,11 @@ export default function handler(req, res) {
         ),
     },
   };
-  // ONLY for testing! All PortableText must be converted to html
-  const pt2html = madeObjects.map((o) => 
+  // All PortableText must be converted to html
+  const pt2html = data.map((o) => 
     ({
       ...o,
-      referredToBy: o.referredToBy.map(b => ({
+      referredToBy: o.referredToBy?.map(b => ({
         ...b,
         body: blocksToHtml({
           blocks: b.body,
