@@ -32,6 +32,10 @@ export default async function idHandler(req, res) {
           h("code", props.node.code)
         ),
     },
+    marks: {
+      internalLink: props =>
+        h("a", { href: "/id/" + props.mark.reference._ref }, props.children)
+    }
   }
 
   const pt2html = data?.map((o) => 
