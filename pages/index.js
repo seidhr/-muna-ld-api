@@ -11,12 +11,17 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Muna LD API - demo</h1>
+        <h1 className={styles.title}>Muna Linked Data API (MuLDA)</h1>
+
+        <h2 className={styles.subtitle}>
+          Sanity to JSON-LD and N-triples
+        </h2>
 
         <p className={styles.description}>
-          Sanity to JSON-LD PoC!
+          Only ten objects from the list APIs and no pagination for now.
         </p>
-        <ul>
+
+        <ul className={styles.list}>
           <li>
             <Link href="/api/json">
               <a>api/json</a>
@@ -32,6 +37,8 @@ export default function Home() {
               <a>api/json/id/ubm-bf-diby-000409</a>
             </Link>
           </li>
+        </ul>
+        <ul className={styles.list}>
           <li>
             <Link href="/api/rdf">
               <a>api/rdf</a>
