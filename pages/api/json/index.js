@@ -1,47 +1,16 @@
 import rename from "deep-rename-keys";
 import blocksToHtml from "@sanity/block-content-to-html";
-import { filterObject, removeKey, toJSONids } from "../../../lib";
+import { filterObject, pt2html, removeKey, toJSONids } from "../../../lib";
 import { context } from "../../../lib/context";
 import client from "../../../lib/sanity";
-
-const postQuery = `
-  *[_type == "madeObject"][0...10] {
-    ...,
-    
-  }`
+import { getMadeObjects } from "../../../lib/api";
 
 export default async function handler(req, res) {
-  const response = await client.fetch(postQuery);
+  const response = await client.fetch(getMadeObjects);
   const data = await response;
 
-  const h = blocksToHtml.h;
-  const serializers = {
-    types: {
-      code: (props) =>
-        h(
-          "pre",
-          { className: props.node.language },
-          h("code", props.node.code)
-        ),
-    },
-    marks: {
-      internalLink: props =>
-        h("a", { href: "/id/" + props.mark.reference._ref }, props.children)
-    }
-  };
-  // All PortableText must be converted to html
-  const pt2html = data.map((o) => 
-    ({
-      ...o,
-      referredToBy: o.referredToBy?.map(b => ({
-        ...b,
-        body: blocksToHtml({
-          blocks: b.body,
-          serializers: serializers,
-        }) 
-      }))
-    }))
-  const fixIDs = toJSONids(pt2html)
+  const html = pt2html(data)
+  const fixIDs = toJSONids(html)
   const removedRev = fixIDs.map(o => {return removeKey(o, "_rev")});
   const removeUnderscore = removedRev.map((o) =>
     rename(o, function (key) {
@@ -55,7 +24,7 @@ export default async function handler(req, res) {
 
   const json = {
     ...context,
-    "@graph": [...result],
+    "@graph": result,
   };
 
   res.status(200).json(json);
