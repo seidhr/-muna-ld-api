@@ -1,19 +1,19 @@
 import rename from "deep-rename-keys";
 import blocksToHtml from "@sanity/block-content-to-html";
-import { filterObject, removeKey, toJSONids } from "../../../lib";
-import { context } from "../../../lib/context";
+import { filterObject, removeKey, toJSONids } from "../../../../lib";
+import { context } from "../../../../lib/context";
 import { groq } from "next-sanity";
-import client from "../../../lib/sanity";
+import client from "../../../../lib/sanity";
+import * as jsonld from "jsonld";
 
-
-const postQuery = `
+const postQuery = groq`
   *[_type == "madeObject" && _id == $id] {
     ...,
     //hasCurrentOwner[]->{...},
     //hasType[]->{...}
   }`
 
-export default async function idHandler(req, res) {
+export default async function rdfIdHandler(req, res) {
   const {
     query: {id}
   } = req
@@ -67,9 +67,11 @@ export default async function idHandler(req, res) {
     ...product[0],
   };
 
+  const nquads = await jsonld.toRDF(result, { format: "application/n-quads" });
+
   // User with id exists
-  if (result) {
-    res.status(200).json(result);
+  if (nquads) {
+    res.status(200).send(nquads);
   } else {
     res.status(404).json({ message: `Document with id: ${id} not found.` });
   }

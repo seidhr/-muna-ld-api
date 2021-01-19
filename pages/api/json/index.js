@@ -1,14 +1,20 @@
-import { madeObjects } from "../../../../data";
-import blocksToHtml from "@sanity/block-content-to-html";
-import { filterObject, removeKey, toJSONids } from "../../../../lib";
-import { context } from "../../../../lib/context";
-import * as jsonld from "jsonld";
 import rename from "deep-rename-keys";
+import blocksToHtml from "@sanity/block-content-to-html";
+import { filterObject, removeKey, toJSONids } from "../../../lib";
+import { context } from "../../../lib/context";
+import client from "../../../lib/sanity";
 
-export default async function rdfHandler(req, res) {
+const postQuery = `
+  *[_type == "madeObject"][0...10] {
+    ...,
+    
+  }`
+
+export default async function handler(req, res) {
+  const response = await client.fetch(postQuery);
+  const data = await response;
 
   const h = blocksToHtml.h;
-
   const serializers = {
     types: {
       code: (props) =>
@@ -18,10 +24,13 @@ export default async function rdfHandler(req, res) {
           h("code", props.node.code)
         ),
     },
+    marks: {
+      internalLink: props =>
+        h("a", { href: "/id/" + props.mark.reference._ref }, props.children)
+    }
   };
-
   // All PortableText must be converted to html
-  const pt2html = madeObjects.map((o) => 
+  const pt2html = data.map((o) => 
     ({
       ...o,
       referredToBy: o.referredToBy?.map(b => ({
@@ -44,15 +53,10 @@ export default async function rdfHandler(req, res) {
   )
   const result = filterObject(removeUnderscore, "type", "reference");
 
-
   const json = {
     ...context,
     "@graph": [...result],
   };
 
-  console.log(json)
-
-  const nquads = await jsonld.toRDF(json, { format: "application/n-quads" });
-
-  res.status(200).json(nquads);
+  res.status(200).json(json);
 }

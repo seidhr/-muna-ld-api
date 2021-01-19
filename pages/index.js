@@ -15,27 +15,34 @@ export default function Home() {
 
         <p className={styles.description}>
           Sanity to JSON-LD PoC!
-          <br />
-          <Link href="/api/made-object">
-            <a>api/made-object</a>
-          </Link>
-          <br />
-          <Link href="/api/made-object/ubm-bf-diby-000358">
-            <a>api/made-object/ubm-bf-diby-000358</a>
-          </Link>
-          <br />
-          <Link href="/api/made-object/ubm-bf-diby-000409">
-            <a>api/made-object/ubm-bf-diby-000409</a>
-          </Link>
-          <br />
         </p>
-        <p className={styles.description}>
-          Sanity JSON to RDF.
-          <br />
-          <Link href="/api/made-object/rdf">
-            <a>api/made-object/rdf</a>
-          </Link>
-        </p>
+        <ul>
+          <li>
+            <Link href="/api/json">
+              <a>api/json</a>
+            </Link>
+          </li>
+          <li>
+            <Link href="/api/json/id/ubm-bf-diby-000358">
+              <a>api/json/id/ubm-bf-diby-000358</a>
+            </Link>
+          </li>
+          <li>
+            <Link href="/api/json/id/ubm-bf-diby-000409">
+              <a>api/json/id/ubm-bf-diby-000409</a>
+            </Link>
+          </li>
+          <li>
+            <Link href="/api/rdf">
+              <a>api/rdf</a>
+            </Link>
+          </li>
+          <li>
+            <Link href="/api/rdf/id/ubm-bf-diby-000409">
+              <a>api/rdf/id/ubm-bf-diby-000409</a>
+            </Link>
+          </li>
+        </ul>
 
         <p className={styles.description}>
           <Link href="https://github.com/seidhr/marcus-ld-api">Github</Link>
