@@ -1,5 +1,5 @@
 import rename from "deep-rename-keys";
-import { filterObject, pt2html, removeKey, toJSONids } from "../../../../lib";
+import { filterObject, pt2html, removeKey, toJSONids, clean } from "../../../../lib";
 import { context } from "../../../../lib/context";
 import client from "../../../../lib/sanity";
 import * as jsonld from "jsonld";
@@ -24,14 +24,15 @@ export default async function rdfIdHandler(req, res) {
       return key;
     })
   )
-  const product = filterObject(removeUnderscore, "type", "reference");
+  let result = filterObject(removeUnderscore, "type", "reference");
+  result = result.map(o => clean(o))
 
-  const result = {
+  const json = {
     ...context,
-    ...product[0],
+    ...result[0],
   };
 
-  const nquads = await jsonld.toRDF(result, { format: "application/n-quads" });
+  const nquads = await jsonld.toRDF(json, { format: "application/n-quads" });
 
   // User with id exists
   if (nquads) {

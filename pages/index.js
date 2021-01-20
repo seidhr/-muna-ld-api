@@ -18,7 +18,7 @@ export default function Home() {
         </h2>
 
         <p className={styles.description}>
-          Only ten objects from the list APIs and no pagination for now.
+          Only 100 objects from the list APIs and no pagination for now.
         </p>
 
         <ul className={styles.list}>

@@ -1,6 +1,5 @@
 import rename from "deep-rename-keys";
-import blocksToHtml from "@sanity/block-content-to-html";
-import { filterObject, pt2html, removeKey, toJSONids } from "../../../lib";
+import { filterObject, pt2html, removeKey, toJSONids, clean } from "../../../lib";
 import { context } from "../../../lib/context";
 import client from "../../../lib/sanity";
 import { getMadeObjects } from "../../../lib/api";
@@ -20,7 +19,10 @@ export default async function handler(req, res) {
       return key;
     })
   )
-  const result = filterObject(removeUnderscore, "type", "reference");
+
+  let result = filterObject(removeUnderscore, "type", "reference");
+  result = result.map(o => clean(o))
+  
 
   const json = {
     ...context,

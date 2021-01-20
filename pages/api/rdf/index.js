@@ -1,5 +1,5 @@
 import rename from "deep-rename-keys";
-import { filterObject, pt2html, removeKey, toJSONids } from "../../../lib";
+import { filterObject, pt2html, removeKey, toJSONids, clean } from "../../../lib";
 import { context } from "../../../lib/context";
 import client from "../../../lib/sanity";
 import * as jsonld from "jsonld";
@@ -20,7 +20,8 @@ export default async function rdfHandler(req, res) {
       return key;
     })
   )
-  const result = filterObject(removeUnderscore, "type", "reference");
+  let result = filterObject(removeUnderscore, "type", "reference");
+  result = result.map(o => clean(o))
 
   const json = {
     ...context,

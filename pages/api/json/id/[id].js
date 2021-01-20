@@ -1,5 +1,5 @@
 import rename from "deep-rename-keys";
-import { filterObject, pt2html, removeKey, toJSONids } from "../../../../lib";
+import { filterObject, pt2html, removeKey, toJSONids, clean } from "../../../../lib";
 import { context } from "../../../../lib/context";
 import client from "../../../../lib/sanity";
 import { getID } from "../../../../lib/api";
@@ -24,16 +24,18 @@ export default async function idHandler(req, res) {
       return key;
     })
   )
-  const product = filterObject(removeUnderscore, "type", "reference");
 
-  const result = {
+  let result = filterObject(removeUnderscore, "type", "reference");
+  result = result.map(o => clean(o))
+
+  const json = {
     ...context,
-    ...product[0],
+    ...result[0],
   };
 
   // User with id exists
-  if (result) {
-    res.status(200).json(result);
+  if (json) {
+    res.status(200).json(json);
   } else {
     res.status(404).json({ message: `Document with id: ${id} not found.` });
   }
